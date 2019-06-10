@@ -50,7 +50,7 @@ class AnalysenTest {
 	 */
 	@Test
 	void testTorstatistikenToreDaheim() throws IOException {
-		assertTrue(Analysen.torstatistikenToreDaheim());
+		assertFalse(Analysen.torstatistikenToreDaheim());
 	}
 
 	/**

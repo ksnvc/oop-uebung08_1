@@ -1,11 +1,8 @@
 package ueb08;
 
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
-import java.util.*;
-
-
+import java.util.List;
 
 
 class Analysen {
@@ -15,7 +12,13 @@ class Analysen {
 	 */
 	static double torstatistikenToreProSpiel() throws IOException {
 
-		return 0.0;
+		Bundesliga b = Bundesliga.loadFromResource();
+
+        double tore = 0;
+        for(Spiel s : b.spiele) {
+        	tore += s.getToreGast() + s.getToreHeim();
+		}
+		return (tore/(b.spiele.size()));
 	}
 
 	/**
@@ -23,16 +26,57 @@ class Analysen {
 	 */
 	static double torstatustikenToreProErstligaspiel() throws IOException {
 
+      Bundesliga b = Bundesliga.loadFromResource();
 
-		return 0.0;
-	}
+      double tore = 0;
+      double zähler = 0;
+
+      	for(Verein v: b.vereine.values()) {
+      		if(v.getLiga() == 1){
+				for(Spiel s : b.spiele){
+      			if(v.getId() == s.getGast())
+      		        tore += s.getToreGast();
+      			if(v.getId() == s.getHeim())
+      				tore += s.getToreHeim();
+
+      				zähler += 1;
+      		}
+		}
+      }
+      return tore/zähler;
+	  }
+
+
 
 	/**
 	 * Wie viele Tore fallen durchschnittlich an einem Spieltag der 2. Liga?
 	 */
 	static double torstatistikenToreProSpieltag2teLiga() throws IOException {
 
-		return 0.0;
+		Bundesliga b = Bundesliga.loadFromResource();
+
+		double tore = 0;
+		double tag = 0;
+
+		for(Verein v: b.vereine.values()) {
+			if(v.getLiga() == 2){
+				for(Spiel s : b.spiele){
+
+					if(v.getId() == s.getGast()){
+						tore += s.getToreGast();
+					if(s.getSpieltag()>tag)
+						tag = s.getSpieltag();
+					}
+
+					if(v.getId() == s.getHeim()){
+						tore += s.getToreHeim();
+					if(s.getSpieltag()>tag);
+						tag = s.getSpieltag();}
+
+				}
+			}
+		}
+		return tore/tag;
 	}
 
 	/**
@@ -40,7 +84,31 @@ class Analysen {
 	 */
 	static boolean torstatistikenToreNachmittagsAbends() throws IOException {
 
+		Bundesliga b = Bundesliga.loadFromResource();
+
+
+		double toreNach = 0;
+		double anzNach = 0;
+
+		double toreAbend = 0;
+		double anzAbend = 0;
+
+		for(Spiel s : b.spiele){
+			if(s.getUhrzeit().equals("15:30:00")){
+				toreNach += s.getToreGast() + s.getToreHeim();
+				anzNach++;
+			}
+			else{
+				toreAbend += s.getToreGast() + s.getToreHeim();
+				anzAbend++;
+			}
+		}
+
+		if((toreNach/anzNach)>(toreAbend/anzAbend))
+			return true;
+
 		return false;
+
 	}
 
 	/**
@@ -48,7 +116,34 @@ class Analysen {
 	 */
 	static boolean torstatistikenToreDaheim() throws IOException {
 
-		return false;
+		Bundesliga b = Bundesliga.loadFromResource();
+
+		double toreHeim = 0;
+
+		double toreGast = 0;
+		double anz = 0;
+		double anzVereine = 0;
+
+		for(Verein v: b.vereine.values()) {
+			if(v.getLiga() == 3) {
+				anzVereine++;
+				for (Spiel s : b.spiele) {
+					if(v.getId() == s.getHeim()) {
+						toreHeim += s.getToreHeim();
+						anz++;
+					}
+					if(v.getId() == s.getGast())
+						toreGast += s.getToreGast();
+				}
+			}
+
+	}
+	anz /= anzVereine;
+	if((toreHeim/anz)>(toreGast/anz))
+		return true;
+
+	return false;
+
 	}
 
 	/**
